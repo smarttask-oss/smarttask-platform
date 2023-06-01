@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "declaration": true,
+    "target": "ES2019",
+    "outDir": "dist",
+    "paths": {
+      "@smarttask-platform/core": ["../core"]
+    }
+  },
+  "include": ["src/**/*"]
+}

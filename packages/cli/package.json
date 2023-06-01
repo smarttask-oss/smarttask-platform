@@ -1,0 +1,56 @@
+{
+  "name": "@smarttask-platform/cli",
+  "version": "0.0.1",
+  "description": "CLI of SmartTask Platform",
+  "license": "MIT",
+  "bin": {
+    "smarttask": "./bin/run"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "repository": "smarttask-oss/smarttask-platform",
+  "oclif": {
+    "bin": "smarttask",
+    "dirname": "smarttask",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ]
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "test": "vitest",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "prepack": "yarn build && oclif manifest && oclif readme",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "bugs": "https://github.com/smarttask-oss/smarttask-platform/issues",
+  "keywords": [
+    "smarttask",
+    "automation",
+    "sdk"
+  ],
+  "dependencies": {
+    "@oclif/core": "^2",
+    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-plugins": "^2.4.7",
+    "archiver": "^5.3.1",
+    "esbuild": "^0.17.19"
+  },
+  "devDependencies": {
+    "@oclif/test": "^2.3.21",
+    "@types/archiver": "^5.3.2",
+    "shx": "^0.3.3",
+    "ts-node": "^10.9.1"
+  }
+}

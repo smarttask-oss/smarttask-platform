@@ -1,0 +1,16 @@
+{
+  "name": "smarttask-platform",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@tsconfig/node16": "^1.0.4",
+    "@types/node": "^20.2.5",
+    "@vitest/coverage-c8": "^0.30.1",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
