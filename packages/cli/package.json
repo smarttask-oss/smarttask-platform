@@ -1,6 +1,6 @@
 {
   "name": "@smarttask-platform/cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI of SmartTask Platform",
   "license": "MIT",
   "bin": {
@@ -8,6 +8,9 @@
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "/bin",
     "/dist",
@@ -50,7 +53,11 @@
   "devDependencies": {
     "@oclif/test": "^2.3.21",
     "@types/archiver": "^5.3.2",
+    "@types/node": "^20.2.5",
+    "@vitest/coverage-c8": "^0.30.1",
     "shx": "^0.3.3",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
   }
 }
