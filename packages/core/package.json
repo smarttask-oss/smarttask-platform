@@ -1,6 +1,6 @@
 {
   "name": "@smarttask-platform/core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "SmartTask Platform core definitions and utilities.",
   "type": "module",
   "repository": "smarttask-oss/smarttask-platform",
@@ -24,6 +24,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "prepublishOnly": "yarn build",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "test:ci": "vitest run test --threads=false --coverage.enabled --coverage.reporter='text-summary'",
