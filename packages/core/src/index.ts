@@ -1,2 +1,2 @@
-export { Integration } from './schema';
-export { request } from './utils';
+export { Integration, integrationSchema } from './schema';
+export { dehydrate, request } from './utils';

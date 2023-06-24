@@ -45,8 +45,8 @@ export const urlSchema = z.string().url();
 export const configNameSchema = z
   .string()
   .min(2)
-  .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/)
-  .max(64);
+  .max(64)
+  .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/);
 
 export const configLabelSchema = z
   .string()
@@ -175,6 +175,7 @@ export const oauth2AuthenticationSchema = z
       .args(
         z.object({
           env: z.record(z.string()),
+          state: z.string(),
         })
       )
       .returns(z.string().url()),
@@ -218,7 +219,7 @@ export const apiKeyAuthenticationSchema = z
     type: z.literal('api-key'),
     label: z
       .function()
-      .args(z.object({ accessToken: z.string(), authData: z.record(z.string()) }))
+      .args(z.object({ apiKey: z.string(), authData: z.record(z.string()) }))
       .returns(z.string().min(1).max(64))
       .optional(),
   })
@@ -235,7 +236,14 @@ export const resourceSchema = z
     sample: sampleSchema,
     handle: z
       .function()
-      .args(z.object({ accessToken: z.string(), authData: z.record(z.string()) }))
+      .args(
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+        })
+      )
       .returns(z.promise(z.any())),
   })
   .strict();
@@ -251,7 +259,13 @@ export const triggerSchema = z
     handle: z
       .function()
       .args(
-        z.object({ accessToken: z.string(), authData: z.record(z.string()), input: z.record(z.string()) })
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.string()),
+        })
       )
       .returns(z.promise(z.any())),
   })
@@ -268,7 +282,13 @@ export const actionSchema = z
     handle: z
       .function()
       .args(
-        z.object({ accessToken: z.string(), authData: z.record(z.string()), input: z.record(z.string()) })
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.string()),
+        })
       )
       .returns(z.promise(z.any())),
   })
@@ -285,10 +305,15 @@ export const injectionSchema = z
     handle: z
       .function()
       .args(
-        z.object({ accessToken: z.string(), authData: z.record(z.string()), input: z.record(z.string()) })
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.string()),
+        })
       )
       .returns(z.promise(z.any())),
-    paginate: z.boolean().optional(),
   })
   .strict();
 
@@ -307,3 +332,47 @@ export const integrationSchema = z
   .strict();
 
 export type Integration = z.infer<typeof integrationSchema>;
+
+interface DryResource {
+  name: z.infer<typeof uniqueNameSchema>;
+  sample: z.infer<typeof sampleSchema>;
+}
+
+interface DryTrigger {
+  name: z.infer<typeof uniqueNameSchema>;
+  label?: z.infer<typeof labelSchema>;
+  description?: z.infer<typeof descriptionSchema>;
+  sample: z.infer<typeof sampleSchema>;
+  input: z.infer<typeof inputSchema>;
+  output: z.infer<typeof outputSchema>;
+}
+
+interface DryAction {
+  name: z.infer<typeof uniqueNameSchema>;
+  label?: z.infer<typeof labelSchema>;
+  description?: z.infer<typeof descriptionSchema>;
+  sample: z.infer<typeof sampleSchema>;
+  input: z.infer<typeof inputSchema>;
+  output: z.infer<typeof outputSchema>;
+}
+
+interface DryInjection {
+  name: z.infer<typeof uniqueNameSchema>;
+  label?: z.infer<typeof labelSchema>;
+  description?: z.infer<typeof descriptionSchema>;
+  sample: z.infer<typeof sampleSchema>;
+  input: z.infer<typeof inputSchema>;
+  output: z.infer<typeof outputSchema>;
+}
+
+export interface DryIntegration {
+  name: z.infer<typeof uniqueNameSchema>;
+  displayName?: z.infer<typeof labelSchema>;
+  description?: z.infer<typeof descriptionSchema>;
+  version: z.infer<typeof semanticVersionSchema>;
+  authentication?: { type: 'api-key' } | { type: 'oauth2' };
+  resources: DryResource[];
+  triggers: DryTrigger[];
+  actions: DryAction[];
+  injections: DryInjection[];
+}
