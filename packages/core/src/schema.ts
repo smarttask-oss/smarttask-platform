@@ -264,6 +264,7 @@ export const triggerSchema = z
           accessToken: z.string().optional(),
           apiKey: z.string().optional(),
           authData: z.record(z.string()),
+          snapshot: z.array(z.string()),
           input: z.record(z.string()),
         })
       )
