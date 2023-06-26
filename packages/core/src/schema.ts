@@ -266,9 +266,10 @@ export const triggerSchema = z
           authData: z.record(z.string()),
           snapshot: z.array(z.string()).optional(),
           input: z.record(z.string()),
+          dry: z.boolean().optional(),
         })
       )
-      .returns(z.promise(z.any())),
+      .returns(z.promise(z.array(z.any()))),
   })
   .strict();
 
