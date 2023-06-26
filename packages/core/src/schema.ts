@@ -139,32 +139,32 @@ export const scalarConfigSchema = z.discriminatedUnion('type', [
 export const inputSchema = z.array(scalarConfigSchema).max(128);
 
 type OutputInnerSchema =
-  | { t: 'string' | 'string?' | 'boolean' | 'boolean?' | 'number' | 'number?' | 'null' }
-  | { t: 'array'; i: OutputInnerSchema }
-  | { t: 'object'; v: Record<string, OutputInnerSchema> };
+  | { type: 'string' | 'string?' | 'boolean' | 'boolean?' | 'number' | 'number?' | 'null' }
+  | { type: 'array'; items: OutputInnerSchema }
+  | { type: 'object'; properties: Record<string, OutputInnerSchema> };
 
 type OutputSchema =
-  | { t: 'array'; i: OutputInnerSchema }
-  | { t: 'object'; v: Record<string, OutputInnerSchema> };
+  | { type: 'array'; items: OutputInnerSchema }
+  | { type: 'object'; properties: Record<string, OutputInnerSchema> };
 
 const outputInnerSchema: z.ZodType<OutputInnerSchema> = z.lazy(() =>
-  z.discriminatedUnion('t', [
-    z.object({ t: z.literal('string') }),
-    z.object({ t: z.literal('string?') }),
-    z.object({ t: z.literal('boolean') }),
-    z.object({ t: z.literal('boolean?') }),
-    z.object({ t: z.literal('number') }),
-    z.object({ t: z.literal('number?') }),
-    z.object({ t: z.literal('null') }),
-    z.object({ t: z.literal('array'), i: outputInnerSchema }),
-    z.object({ t: z.literal('object'), v: z.record(outputInnerSchema) }),
+  z.discriminatedUnion('type', [
+    z.object({ type: z.literal('string') }),
+    z.object({ type: z.literal('string?') }),
+    z.object({ type: z.literal('boolean') }),
+    z.object({ type: z.literal('boolean?') }),
+    z.object({ type: z.literal('number') }),
+    z.object({ type: z.literal('number?') }),
+    z.object({ type: z.literal('null') }),
+    z.object({ type: z.literal('array'), items: outputInnerSchema }),
+    z.object({ type: z.literal('object'), properties: z.record(outputInnerSchema) }),
   ])
 );
 
 export const outputSchema: z.ZodType<OutputSchema> = z.lazy(() =>
-  z.discriminatedUnion('t', [
-    z.object({ t: z.literal('array'), i: outputInnerSchema }),
-    z.object({ t: z.literal('object'), v: z.record(outputInnerSchema) }),
+  z.discriminatedUnion('type', [
+    z.object({ type: z.literal('array'), items: outputInnerSchema }),
+    z.object({ type: z.literal('object'), properties: z.record(outputInnerSchema) }),
   ])
 );
 

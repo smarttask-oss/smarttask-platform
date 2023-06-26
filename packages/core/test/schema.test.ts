@@ -409,23 +409,29 @@ describe('schema', () => {
   it('validates output schema', () => {
     const t: Table = [
       {
-        v: { t: 'object', v: { a: { t: 'string' } } },
+        v: { type: 'object', properties: { a: { type: 'string' } } },
         r: true,
       },
       {
-        v: { t: 'object', v: { a: { t: 'string' }, b: { t: 'number' } } },
+        v: { type: 'object', properties: { a: { type: 'string' }, b: { type: 'number' } } },
         r: true,
       },
       {
-        v: { t: 'object', v: { a: { t: 'string' }, b: { t: 'object', v: { c: { t: 'number' } } } } },
+        v: {
+          type: 'object',
+          properties: { a: { type: 'string' }, b: { type: 'object', properties: { c: { type: 'number' } } } },
+        },
         r: true,
       },
       {
-        v: { t: 'object', v: { a: { t: 'string' }, b: { t: 'array', i: { t: 'string' } } } },
+        v: {
+          type: 'object',
+          properties: { a: { type: 'string' }, b: { type: 'array', items: { type: 'string' } } },
+        },
         r: true,
       },
       {
-        v: { t: 'array', i: { t: 'array', i: { t: 'string' } } },
+        v: { type: 'array', items: { type: 'array', items: { type: 'string' } } },
         r: true,
       },
     ];
