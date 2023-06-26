@@ -269,7 +269,7 @@ export const triggerSchema = z
           dry: z.boolean().optional(),
         })
       )
-      .returns(z.promise(z.array(z.any()))),
+      .returns(z.promise(z.object({ snapshot: z.array(z.string()), delta: z.array(z.any()) }))),
   })
   .strict();
 
