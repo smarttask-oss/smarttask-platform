@@ -84,6 +84,8 @@ export const numberConfigSchema = z
     type: z.literal('number'),
     gt: z.number().optional(),
     lt: z.number().optional(),
+    gte: z.number().optional(),
+    lte: z.number().optional(),
     integer: z.boolean().optional(),
     optional: z.boolean().optional(),
     expression: z.boolean().optional(),
@@ -126,12 +128,6 @@ export const booleanConfigSchema = z
   })
   .strict();
 
-export const dynamicConfigSchema = z
-  .object({
-    type: z.literal('dynamic'),
-  })
-  .strict();
-
 export const scalarConfigSchema = z.discriminatedUnion('type', [
   stringConfigSchema,
   enumConfigSchema,
@@ -141,7 +137,36 @@ export const scalarConfigSchema = z.discriminatedUnion('type', [
 ]);
 
 export const inputSchema = z.array(scalarConfigSchema).max(128);
-export const outputSchema = z.union([z.array(scalarConfigSchema).max(128), dynamicConfigSchema]);
+
+type OutputInnerSchema =
+  | { t: 'string' | 'string?' | 'boolean' | 'boolean?' | 'number' | 'number?' | 'null' }
+  | { t: 'array'; i: OutputInnerSchema }
+  | { t: 'object'; v: Record<string, OutputInnerSchema> };
+
+type OutputSchema =
+  | { t: 'array'; i: OutputInnerSchema }
+  | { t: 'object'; v: Record<string, OutputInnerSchema> };
+
+const outputInnerSchema: z.ZodType<OutputInnerSchema> = z.lazy(() =>
+  z.discriminatedUnion('t', [
+    z.object({ t: z.literal('string') }),
+    z.object({ t: z.literal('string?') }),
+    z.object({ t: z.literal('boolean') }),
+    z.object({ t: z.literal('boolean?') }),
+    z.object({ t: z.literal('number') }),
+    z.object({ t: z.literal('number?') }),
+    z.object({ t: z.literal('null') }),
+    z.object({ t: z.literal('array'), i: outputInnerSchema }),
+    z.object({ t: z.literal('object'), v: z.record(outputInnerSchema) }),
+  ])
+);
+
+export const outputSchema: z.ZodType<OutputSchema> = z.lazy(() =>
+  z.discriminatedUnion('t', [
+    z.object({ t: z.literal('array'), i: outputInnerSchema }),
+    z.object({ t: z.literal('object'), v: z.record(outputInnerSchema) }),
+  ])
+);
 
 export const httpRequestOptionsSchema = z
   .object({
@@ -234,6 +259,7 @@ export const resourceSchema = z
   .object({
     name: uniqueNameSchema,
     sample: sampleSchema,
+    output: outputSchema,
     handle: z
       .function()
       .args(
@@ -264,8 +290,8 @@ export const triggerSchema = z
           accessToken: z.string().optional(),
           apiKey: z.string().optional(),
           authData: z.record(z.string()),
-          snapshot: z.array(z.string()).optional(),
           input: z.record(z.string()),
+          snapshot: z.array(z.string()).optional(),
           dry: z.boolean().optional(),
         })
       )
@@ -338,6 +364,7 @@ export type Integration = z.infer<typeof integrationSchema>;
 interface DryResource {
   name: z.infer<typeof uniqueNameSchema>;
   sample: z.infer<typeof sampleSchema>;
+  output: z.infer<typeof outputSchema>;
 }
 
 interface DryTrigger {

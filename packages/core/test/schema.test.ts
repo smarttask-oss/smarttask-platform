@@ -5,12 +5,12 @@ import {
   configLabelSchema,
   dateConfigSchema,
   descriptionSchema,
-  dynamicConfigSchema,
   enumConfigSchema,
   httpMethodSchema,
   jsonSchema,
   labelSchema,
   numberConfigSchema,
+  outputSchema,
   sampleSchema,
   semanticVersionSchema,
   stringConfigSchema,
@@ -406,15 +406,31 @@ describe('schema', () => {
     }
   });
 
-  it('validates dynamic config', () => {
+  it('validates output schema', () => {
     const t: Table = [
       {
-        v: { type: 'dynamic' },
+        v: { t: 'object', v: { a: { t: 'string' } } },
+        r: true,
+      },
+      {
+        v: { t: 'object', v: { a: { t: 'string' }, b: { t: 'number' } } },
+        r: true,
+      },
+      {
+        v: { t: 'object', v: { a: { t: 'string' }, b: { t: 'object', v: { c: { t: 'number' } } } } },
+        r: true,
+      },
+      {
+        v: { t: 'object', v: { a: { t: 'string' }, b: { t: 'array', i: { t: 'string' } } } },
+        r: true,
+      },
+      {
+        v: { t: 'array', i: { t: 'array', i: { t: 'string' } } },
         r: true,
       },
     ];
     for (const e of t) {
-      expect(dynamicConfigSchema.safeParse(e.v).success).toBe(e.r);
+      expect(outputSchema.safeParse(e.v).success).toBe(e.r);
     }
   });
 });

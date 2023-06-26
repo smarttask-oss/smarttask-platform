@@ -25,6 +25,7 @@ export const dehydrate = (integration: Integration): DryIntegration => ({
   resources: integration.resources.map(r => ({
     name: r.name,
     sample: r.sample,
+    output: r.output,
   })),
   triggers: integration.triggers.map(t => ({
     name: t.name,
