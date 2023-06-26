@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { camelCase, reduce } from 'lodash';
 import { z } from 'zod';
-import { DryIntegration, Integration, httpRequestOptionsSchema } from './schema';
+import { DryIntegration, Integration, Json, httpRequestOptionsSchema } from './schema';
 
 export const request = async <T>(options: z.infer<typeof httpRequestOptionsSchema>): Promise<T> => {
   const { data } = await axios.request<T>({
@@ -52,3 +53,27 @@ export const dehydrate = (integration: Integration): DryIntegration => ({
     output: i.output,
   })),
 });
+
+export const camelize = (obj: Json): Json => {
+  if (
+    typeof obj === 'string' ||
+    typeof obj === 'number' ||
+    typeof obj === 'boolean' ||
+    typeof obj === 'undefined' ||
+    obj === null
+  ) {
+    return obj;
+  } else if (Array.isArray(obj)) {
+    return obj.map(v => camelize(v));
+  }
+  return reduce(
+    obj,
+    (r, v, k) => {
+      return {
+        ...r,
+        [camelCase(k)]: camelize(v),
+      };
+    },
+    {}
+  );
+};
