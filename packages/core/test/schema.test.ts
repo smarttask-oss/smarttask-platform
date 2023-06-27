@@ -444,6 +444,13 @@ describe('schema', () => {
       {
         v: {
           type: 'object',
+          properties: { a: { type: 'union', types: [{ type: 'string' }, { type: 'undefined' }] } },
+        },
+        r: true,
+      },
+      {
+        v: {
+          type: 'object',
           properties: { a: { type: 'union', types: [{ type: 'string' }] } },
         },
         r: false,

@@ -139,7 +139,7 @@ export const scalarConfigSchema = z.discriminatedUnion('type', [
 export const inputSchema = z.array(scalarConfigSchema).max(128);
 
 type OutputInnerSchema =
-  | { type: 'string' | 'boolean' | 'number' | 'null' }
+  | { type: 'string' | 'boolean' | 'number' | 'null' | 'undefined' }
   | { type: 'array'; items: OutputInnerSchema }
   | { type: 'object'; properties: Record<string, OutputInnerSchema> }
   | { type: 'union'; types: OutputInnerSchema[] };
@@ -154,6 +154,7 @@ const outputInnerSchema: z.ZodType<OutputInnerSchema> = z.lazy(() =>
     z.object({ type: z.literal('boolean') }),
     z.object({ type: z.literal('number') }),
     z.object({ type: z.literal('null') }),
+    z.object({ type: z.literal('undefined') }),
     z.object({ type: z.literal('union'), types: z.array(outputInnerSchema).min(2) }),
     z.object({ type: z.literal('array'), items: outputInnerSchema }),
     z.object({ type: z.literal('object'), properties: z.record(outputInnerSchema) }),
