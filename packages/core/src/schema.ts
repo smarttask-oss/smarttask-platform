@@ -172,7 +172,7 @@ export const httpRequestOptionsSchema = z
   .object({
     url: urlSchema,
     method: httpMethodSchema,
-    body: jsonSchema.optional(),
+    body: z.record(z.any()).optional(),
     querystring: z.record(z.string()).optional(),
     headers: z.record(z.string()).optional(),
   })
