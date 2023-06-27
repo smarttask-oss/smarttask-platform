@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { camelCase, reduce } from 'lodash';
+import { camelCase, pick, reduce } from 'lodash';
 import { z } from 'zod';
 import { DryIntegration, Integration, Json, httpRequestOptionsSchema } from './schema';
 
@@ -77,3 +77,5 @@ export const camelize = (obj: Json): Json => {
     {}
   );
 };
+
+export const filterKeys = (obj: any, keys: string[]): any => pick(obj, keys);

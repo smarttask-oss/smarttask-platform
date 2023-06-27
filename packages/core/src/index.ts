@@ -1,2 +1,2 @@
 export { Integration, integrationSchema } from './schema';
-export { camelize, dehydrate, request } from './utils';
+export { camelize, dehydrate, filterKeys, request } from './utils';

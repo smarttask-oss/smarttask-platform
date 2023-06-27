@@ -1,17 +1,25 @@
 import { describe, expect, it } from 'vitest';
 import { Json } from '../src/schema';
-import { camelize } from '../src/';
+import { camelize, filterKeys } from '../src/';
 
-interface Entry {
+interface JsonEntry {
   v: Json;
   r: Json;
 }
 
-type Table = Entry[];
+type JsonTable = JsonEntry[];
+
+interface FilterEntry {
+  v: any;
+  k: string[];
+  r: any;
+}
+
+type FilterTable = FilterEntry[];
 
 describe('utils', () => {
   it('converts json properties to camel case', () => {
-    const t: Table = [
+    const t: JsonTable = [
       {
         v: 'string',
         r: 'string',
@@ -43,6 +51,34 @@ describe('utils', () => {
     ];
     for (const e of t) {
       expect(camelize(e.v)).toEqual(e.r);
+    }
+  });
+
+  it('filters by key', () => {
+    const t: FilterTable = [
+      {
+        v: { a: 1 },
+        k: ['a'],
+        r: { a: 1 },
+      },
+      {
+        v: { a: 1 },
+        k: ['b'],
+        r: {},
+      },
+      {
+        v: { a: 1, b: 2 },
+        k: ['a'],
+        r: { a: 1 },
+      },
+      {
+        v: { a: 1, b: 2, c: 3 },
+        k: ['a', 'b'],
+        r: { a: 1, b: 2 },
+      },
+    ];
+    for (const e of t) {
+      expect(filterKeys(e.v, e.k)).toEqual(e.r);
     }
   });
 });
