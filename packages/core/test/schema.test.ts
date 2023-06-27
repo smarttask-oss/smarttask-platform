@@ -434,6 +434,36 @@ describe('schema', () => {
         v: { type: 'array', items: { type: 'array', items: { type: 'string' } } },
         r: true,
       },
+      {
+        v: {
+          type: 'object',
+          properties: { a: { type: 'union', types: [{ type: 'string' }, { type: 'null' }] } },
+        },
+        r: true,
+      },
+      {
+        v: {
+          type: 'object',
+          properties: { a: { type: 'union', types: [{ type: 'string' }] } },
+        },
+        r: false,
+      },
+      {
+        v: {
+          type: 'object',
+          properties: {
+            a: {
+              type: 'union',
+              types: [
+                { type: 'string' },
+                { type: 'null' },
+                { type: 'object', properties: { b: { type: 'string' } } },
+              ],
+            },
+          },
+        },
+        r: true,
+      },
     ];
     for (const e of t) {
       expect(outputSchema.safeParse(e.v).success).toBe(e.r);
