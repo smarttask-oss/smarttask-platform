@@ -8,9 +8,11 @@ import {
   descriptionSchema,
   enumConfigSchema,
   httpMethodSchema,
+  inputSchema,
   jsonSchema,
   labelSchema,
   numberConfigSchema,
+  objectConfigSchema,
   outputSchema,
   sampleSchema,
   semanticVersionSchema,
@@ -438,6 +440,80 @@ describe('schema', () => {
     ];
     for (const e of t) {
       expect(arrayConfigSchema.safeParse(e.v).success).toBe(e.r);
+    }
+  });
+
+  it('validates object config', () => {
+    const t: Table = [
+      {
+        v: { name: 'names', label: 'label', type: 'object', properties: [{ name: 'name', type: 'string' }] },
+        r: true,
+      },
+      {
+        v: {
+          name: 'names',
+          label: 'label',
+          type: 'object',
+          properties: [{ name: 'name', type: 'string' }],
+        },
+        r: true,
+      },
+      {
+        v: {
+          name: 'names',
+          label: 'label',
+          type: 'object',
+          properties: [],
+        },
+        r: false,
+      },
+    ];
+    for (const e of t) {
+      expect(objectConfigSchema.safeParse(e.v).success).toBe(e.r);
+    }
+  });
+
+  it('validates input schema', () => {
+    const t: Table = [
+      {
+        v: [{ name: 'names', label: 'label', type: 'array', items: { name: 'name', type: 'string' } }],
+        r: true,
+      },
+      {
+        v: [
+          {
+            name: 'names',
+            label: 'label',
+            type: 'array',
+            items: { name: 'name', type: 'object', properties: [{ name: 'aaa', type: 'string' }] },
+          },
+        ],
+        r: true,
+      },
+      {
+        v: [
+          {
+            name: 'names',
+            label: 'label',
+            type: 'string',
+          },
+        ],
+        r: true,
+      },
+      {
+        v: [
+          {
+            name: 'names',
+            label: 'label',
+            type: 'object',
+            properties: [],
+          },
+        ],
+        r: false,
+      },
+    ];
+    for (const e of t) {
+      expect(inputSchema.safeParse(e.v).success).toBe(e.r);
     }
   });
 

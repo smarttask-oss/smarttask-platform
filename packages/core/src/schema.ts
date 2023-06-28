@@ -44,7 +44,7 @@ export const urlSchema = z.string().url();
 
 export const configNameSchema = z
   .string()
-  .min(2)
+  .min(1)
   .max(64)
   .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/);
 
@@ -127,7 +127,7 @@ export const booleanConfigSchema = z
   })
   .strict();
 
-export const scalarConfigSchema = z.discriminatedUnion('type', [
+const scalarConfigSchema = z.discriminatedUnion('type', [
   stringConfigSchema,
   enumConfigSchema,
   booleanConfigSchema,
@@ -135,30 +135,43 @@ export const scalarConfigSchema = z.discriminatedUnion('type', [
   dateConfigSchema,
 ]);
 
-export const arrayConfigSchema = z
-  .object({
-    name: configNameSchema,
-    label: configLabelSchema.optional(),
-    description: configDescriptionSchema.optional(),
-    type: z.literal('array'),
-    minLength: z.number().int().optional(),
-    maxLength: z.number().int().optional(),
-    items: scalarConfigSchema,
-    optional: z.boolean().optional(),
-    expression: z.boolean().optional(),
-  })
-  .strict();
+export const objectConfigSchema: any = z.lazy(() =>
+  z
+    .object({
+      name: configNameSchema,
+      label: configLabelSchema.optional(),
+      description: configDescriptionSchema.optional(),
+      type: z.literal('object'),
+      properties: z
+        .array(z.union([scalarConfigSchema, arrayConfigSchema]))
+        .min(1)
+        .max(128),
+      optional: z.boolean().optional(),
+      expression: z.boolean().optional(),
+    })
+    .strict()
+);
 
-export const allConfigSchema = z.discriminatedUnion('type', [
-  stringConfigSchema,
-  enumConfigSchema,
-  booleanConfigSchema,
-  numberConfigSchema,
-  dateConfigSchema,
-  arrayConfigSchema,
-]);
+export const arrayConfigSchema: any = z.lazy(() =>
+  z
+    .object({
+      name: configNameSchema,
+      label: configLabelSchema.optional(),
+      description: configDescriptionSchema.optional(),
+      type: z.literal('array'),
+      minLength: z.number().int().optional(),
+      maxLength: z.number().int().optional(),
+      items: z.union([scalarConfigSchema, objectConfigSchema]),
+      optional: z.boolean().optional(),
+      expression: z.boolean().optional(),
+    })
+    .strict()
+);
 
-export const inputSchema = z.array(allConfigSchema).max(128);
+export const inputSchema = z
+  .array(z.union([scalarConfigSchema, arrayConfigSchema]))
+  .min(1)
+  .max(128);
 
 type OutputInnerSchema =
   | { type: 'string' | 'boolean' | 'number' | 'null' | 'undefined' }
