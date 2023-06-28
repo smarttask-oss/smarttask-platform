@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   arrayConfigSchema,
+  authenticationSchema,
   booleanConfigSchema,
   configDescriptionSchema,
   configLabelSchema,
@@ -585,6 +586,78 @@ describe('schema', () => {
     ];
     for (const e of t) {
       expect(outputSchema.safeParse(e.v).success).toBe(e.r);
+    }
+  });
+
+  it('validates authentication schema', () => {
+    const t: Table = [
+      {
+        v: { type: 'api-key' },
+        r: true,
+      },
+      {
+        v: { type: 'api-key', label: () => 'abcd' },
+        r: true,
+      },
+      {
+        v: { type: 'api-key', afterAuthorize: [] },
+        r: true,
+      },
+      {
+        v: { type: 'api-key', afterAuthorize: [async () => {}] },
+        r: true,
+      },
+      {
+        v: { type: 'api-key', beforeDeauthorize: [async () => {}], afterAuthorize: [async () => {}] },
+        r: true,
+      },
+      {
+        v: {
+          type: 'oauth2',
+          label: () => 'abcd',
+          url: () => '',
+          authorize: async () => ({
+            accessToken: '',
+            refreshToken: '',
+            expiresIn: 0,
+            uniqueId: '',
+            authData: {},
+          }),
+          refresh: async () => ({
+            accessToken: '',
+            refreshToken: '',
+            expiresIn: 0,
+          }),
+          me: async () => '',
+        },
+        r: true,
+      },
+      {
+        v: {
+          type: 'oauth2',
+          label: () => 'abcd',
+          url: () => '',
+          authorize: async () => ({
+            accessToken: '',
+            refreshToken: '',
+            expiresIn: 0,
+            uniqueId: '',
+            authData: {},
+          }),
+          refresh: async () => ({
+            accessToken: '',
+            refreshToken: '',
+            expiresIn: 0,
+          }),
+          me: async () => '',
+          beforeDeauthorize: [async () => {}],
+          afterAuthorize: [async () => {}],
+        },
+        r: true,
+      },
+    ];
+    for (const e of t) {
+      expect(authenticationSchema.safeParse(e.v).success).toBe(e.r);
     }
   });
 });

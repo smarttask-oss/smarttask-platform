@@ -269,7 +269,35 @@ export const oauth2AuthenticationSchema = z
     label: z
       .function()
       .args(z.object({ accessToken: z.string(), authData: z.record(z.string()) }))
-      .returns(z.string().min(1).max(64))
+      .returns(z.string().min(1))
+      .optional(),
+    afterAuthorize: z
+      .array(
+        z
+          .function()
+          .args(
+            z.object({
+              env: z.record(z.string()),
+              accessToken: z.string(),
+              authData: z.record(z.string()),
+            })
+          )
+          .returns(z.promise(z.void()))
+      )
+      .optional(),
+    beforeDeauthorize: z
+      .array(
+        z
+          .function()
+          .args(
+            z.object({
+              env: z.record(z.string()),
+              accessToken: z.string(),
+              authData: z.record(z.string()),
+            })
+          )
+          .returns(z.promise(z.void()))
+      )
       .optional(),
   })
   .strict();
@@ -280,7 +308,35 @@ export const apiKeyAuthenticationSchema = z
     label: z
       .function()
       .args(z.object({ apiKey: z.string(), authData: z.record(z.string()) }))
-      .returns(z.string().min(1).max(64))
+      .returns(z.string().min(1))
+      .optional(),
+    afterAuthorize: z
+      .array(
+        z
+          .function()
+          .args(
+            z.object({
+              env: z.record(z.string()),
+              apiKey: z.string(),
+              authData: z.record(z.string()),
+            })
+          )
+          .returns(z.promise(z.void()))
+      )
+      .optional(),
+    beforeDeauthorize: z
+      .array(
+        z
+          .function()
+          .args(
+            z.object({
+              env: z.record(z.string()),
+              apiKey: z.string(),
+              authData: z.record(z.string()),
+            })
+          )
+          .returns(z.promise(z.void()))
+      )
       .optional(),
   })
   .strict();
@@ -314,6 +370,7 @@ export const triggerSchema = z
     name: uniqueNameSchema,
     label: labelSchema.optional(),
     description: descriptionSchema.optional(),
+    type: z.enum(['poll', 'webhook', 'persistent']),
     sample: sampleSchema,
     input: inputSchema,
     output: outputSchema,
