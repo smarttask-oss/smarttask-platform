@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  arrayConfigSchema,
   booleanConfigSchema,
   configDescriptionSchema,
   configLabelSchema,
@@ -403,6 +404,40 @@ describe('schema', () => {
     ];
     for (const e of t) {
       expect(booleanConfigSchema.safeParse(e.v).success).toBe(e.r);
+    }
+  });
+
+  it('validates array config', () => {
+    const t: Table = [
+      {
+        v: { name: 'names', label: 'label', type: 'array', items: { name: 'name', type: 'string' } },
+        r: true,
+      },
+      {
+        v: {
+          name: 'names',
+          label: 'label',
+          type: 'array',
+          items: { name: 'name', type: 'string' },
+          minLength: 1,
+          maxLength: 10,
+        },
+        r: true,
+      },
+      {
+        v: {
+          name: 'names',
+          label: 'label',
+          type: 'array',
+          items: { name: 'name', type: 'string' },
+          minLength: 1.1,
+          maxLength: 10.1,
+        },
+        r: false,
+      },
+    ];
+    for (const e of t) {
+      expect(arrayConfigSchema.safeParse(e.v).success).toBe(e.r);
     }
   });
 

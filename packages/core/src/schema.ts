@@ -52,18 +52,17 @@ export const configLabelSchema = z
   .string()
   .min(2)
   .max(128)
-  .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/)
-  .optional();
-export const configDescriptionSchema = z.string().min(2).max(1024).optional();
+  .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/);
+export const configDescriptionSchema = z.string().min(2).max(1024);
 
 export const stringConfigSchema = z
   .object({
     name: configNameSchema,
-    label: configLabelSchema,
-    description: configDescriptionSchema,
+    label: configLabelSchema.optional(),
+    description: configDescriptionSchema.optional(),
     type: z.literal('string'),
-    maxLength: z.number().optional(),
-    minLength: z.number().optional(),
+    maxLength: z.number().int().optional(),
+    minLength: z.number().int().optional(),
     email: z.boolean().optional(),
     url: z.boolean().optional(),
     uuid: z.boolean().optional(),
@@ -79,8 +78,8 @@ export const stringConfigSchema = z
 export const numberConfigSchema = z
   .object({
     name: configNameSchema,
-    label: configLabelSchema,
-    description: configDescriptionSchema,
+    label: configLabelSchema.optional(),
+    description: configDescriptionSchema.optional(),
     type: z.literal('number'),
     gt: z.number().optional(),
     lt: z.number().optional(),
@@ -95,8 +94,8 @@ export const numberConfigSchema = z
 export const dateConfigSchema = z
   .object({
     name: configNameSchema,
-    label: configLabelSchema,
-    description: configDescriptionSchema,
+    label: configLabelSchema.optional(),
+    description: configDescriptionSchema.optional(),
     type: z.literal('date'),
     minDate: z.string().datetime().pipe(z.coerce.date()).optional(),
     maxDate: z.string().datetime().pipe(z.coerce.date()).optional(),
@@ -108,8 +107,8 @@ export const dateConfigSchema = z
 export const enumConfigSchema = z
   .object({
     name: configNameSchema,
-    label: configLabelSchema,
-    description: configDescriptionSchema,
+    label: configLabelSchema.optional(),
+    description: configDescriptionSchema.optional(),
     type: z.literal('enum'),
     values: z.array(z.string()).min(2),
     optional: z.boolean().optional(),
@@ -120,8 +119,8 @@ export const enumConfigSchema = z
 export const booleanConfigSchema = z
   .object({
     name: configNameSchema,
-    label: configLabelSchema,
-    description: configDescriptionSchema,
+    label: configLabelSchema.optional(),
+    description: configDescriptionSchema.optional(),
     type: z.literal('boolean'),
     optional: z.boolean().optional(),
     expression: z.boolean().optional(),
@@ -136,7 +135,30 @@ export const scalarConfigSchema = z.discriminatedUnion('type', [
   dateConfigSchema,
 ]);
 
-export const inputSchema = z.array(scalarConfigSchema).max(128);
+export const arrayConfigSchema = z
+  .object({
+    name: configNameSchema,
+    label: configLabelSchema.optional(),
+    description: configDescriptionSchema.optional(),
+    type: z.literal('array'),
+    minLength: z.number().int().optional(),
+    maxLength: z.number().int().optional(),
+    items: scalarConfigSchema,
+    optional: z.boolean().optional(),
+    expression: z.boolean().optional(),
+  })
+  .strict();
+
+export const allConfigSchema = z.discriminatedUnion('type', [
+  stringConfigSchema,
+  enumConfigSchema,
+  booleanConfigSchema,
+  numberConfigSchema,
+  dateConfigSchema,
+  arrayConfigSchema,
+]);
+
+export const inputSchema = z.array(allConfigSchema).max(128);
 
 type OutputInnerSchema =
   | { type: 'string' | 'boolean' | 'number' | 'null' | 'undefined' }
