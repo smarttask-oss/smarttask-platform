@@ -312,7 +312,7 @@ export const triggerSchema = z
           accessToken: z.string().optional(),
           apiKey: z.string().optional(),
           authData: z.record(z.string()),
-          input: z.record(z.string()),
+          input: z.record(z.any()),
           snapshot: z.array(z.string()).optional(),
           dry: z.boolean().optional(),
         })
@@ -337,7 +337,7 @@ export const actionSchema = z
           accessToken: z.string().optional(),
           apiKey: z.string().optional(),
           authData: z.record(z.string()),
-          input: z.record(z.string()),
+          input: z.record(z.any()),
         })
       )
       .returns(z.promise(z.any())),
@@ -360,7 +360,7 @@ export const injectionSchema = z
           accessToken: z.string().optional(),
           apiKey: z.string().optional(),
           authData: z.record(z.string()),
-          input: z.record(z.string()),
+          input: z.record(z.any()),
         })
       )
       .returns(z.promise(z.any())),
