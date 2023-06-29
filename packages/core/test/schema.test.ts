@@ -109,6 +109,18 @@ describe('schema', () => {
         r: true,
       },
       {
+        v: '1.0.0',
+        r: true,
+      },
+      {
+        v: '1.0.1',
+        r: true,
+      },
+      {
+        v: '1.1.0',
+        r: true,
+      },
+      {
         v: '1.1.1',
         r: true,
       },
@@ -600,18 +612,6 @@ describe('schema', () => {
         r: true,
       },
       {
-        v: { type: 'api-key', afterAuthorize: [] },
-        r: true,
-      },
-      {
-        v: { type: 'api-key', afterAuthorize: [async () => {}] },
-        r: true,
-      },
-      {
-        v: { type: 'api-key', beforeDeauthorize: [async () => {}], afterAuthorize: [async () => {}] },
-        r: true,
-      },
-      {
         v: {
           type: 'oauth2',
           label: () => 'abcd',
@@ -650,8 +650,6 @@ describe('schema', () => {
             expiresIn: 0,
           }),
           me: async () => '',
-          beforeDeauthorize: [async () => {}],
-          afterAuthorize: [async () => {}],
         },
         r: true,
       },

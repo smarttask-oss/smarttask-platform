@@ -9,7 +9,10 @@ export const jsonSchema: z.ZodType<Json> = z.lazy(() =>
 
 export const sampleSchema = z.record(jsonSchema);
 
-export const semanticVersionSchema = z.string().regex(/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.[1-9][0-9]*$/);
+export const semanticVersionSchema = z.union([
+  z.string().regex(/^0\.(0|[1-9][0-9]*)\.[1-9][0-9]*$/),
+  z.string().regex(/^[1-9][0-9]*\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/),
+]);
 
 export const uniqueNameSchema = z
   .string()
@@ -135,7 +138,15 @@ const scalarConfigSchema = z.discriminatedUnion('type', [
   dateConfigSchema,
 ]);
 
-export const objectConfigSchema: any = z.lazy(() =>
+export const objectConfigSchema: z.ZodType<{
+  name: string;
+  label?: string;
+  description?: string;
+  type: 'object';
+  properties: any[];
+  optional?: boolean;
+  expression?: boolean;
+}> = z.lazy(() =>
   z
     .object({
       name: configNameSchema,
@@ -152,7 +163,17 @@ export const objectConfigSchema: any = z.lazy(() =>
     .strict()
 );
 
-export const arrayConfigSchema: any = z.lazy(() =>
+export const arrayConfigSchema: z.ZodType<{
+  name: string;
+  label?: string;
+  description?: string;
+  type: 'array';
+  minLength?: number;
+  maxLength?: number;
+  items: any;
+  optional?: boolean;
+  expression?: boolean;
+}> = z.lazy(() =>
   z
     .object({
       name: configNameSchema,
@@ -168,10 +189,7 @@ export const arrayConfigSchema: any = z.lazy(() =>
     .strict()
 );
 
-export const inputSchema = z
-  .array(z.union([scalarConfigSchema, arrayConfigSchema]))
-  .min(1)
-  .max(128);
+export const inputSchema = z.array(z.union([scalarConfigSchema, arrayConfigSchema])).max(128);
 
 type OutputInnerSchema =
   | { type: 'string' | 'boolean' | 'number' | 'null' | 'undefined' }
@@ -271,34 +289,6 @@ export const oauth2AuthenticationSchema = z
       .args(z.object({ accessToken: z.string(), authData: z.record(z.string()) }))
       .returns(z.string().min(1))
       .optional(),
-    afterAuthorize: z
-      .array(
-        z
-          .function()
-          .args(
-            z.object({
-              env: z.record(z.string()),
-              accessToken: z.string(),
-              authData: z.record(z.string()),
-            })
-          )
-          .returns(z.promise(z.void()))
-      )
-      .optional(),
-    beforeDeauthorize: z
-      .array(
-        z
-          .function()
-          .args(
-            z.object({
-              env: z.record(z.string()),
-              accessToken: z.string(),
-              authData: z.record(z.string()),
-            })
-          )
-          .returns(z.promise(z.void()))
-      )
-      .optional(),
   })
   .strict();
 
@@ -309,34 +299,6 @@ export const apiKeyAuthenticationSchema = z
       .function()
       .args(z.object({ apiKey: z.string(), authData: z.record(z.string()) }))
       .returns(z.string().min(1))
-      .optional(),
-    afterAuthorize: z
-      .array(
-        z
-          .function()
-          .args(
-            z.object({
-              env: z.record(z.string()),
-              apiKey: z.string(),
-              authData: z.record(z.string()),
-            })
-          )
-          .returns(z.promise(z.void()))
-      )
-      .optional(),
-    beforeDeauthorize: z
-      .array(
-        z
-          .function()
-          .args(
-            z.object({
-              env: z.record(z.string()),
-              apiKey: z.string(),
-              authData: z.record(z.string()),
-            })
-          )
-          .returns(z.promise(z.void()))
-      )
       .optional(),
   })
   .strict();
@@ -365,12 +327,12 @@ export const resourceSchema = z
   })
   .strict();
 
-export const triggerSchema = z
+const pollTriggerSchema = z
   .object({
     name: uniqueNameSchema,
     label: labelSchema.optional(),
     description: descriptionSchema.optional(),
-    type: z.enum(['poll', 'webhook', 'persistent']),
+    type: z.literal('poll'),
     sample: sampleSchema,
     input: inputSchema,
     output: outputSchema,
@@ -388,8 +350,87 @@ export const triggerSchema = z
         })
       )
       .returns(z.promise(z.object({ snapshot: z.array(z.string()), delta: z.array(z.any()) }))),
+    uniqueId: z
+      .function()
+      .args(
+        z.object({
+          eventId: z.string(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+        })
+      )
+      .returns(z.string()),
   })
   .strict();
+
+const webhookTriggerSchema = z
+  .object({
+    name: uniqueNameSchema,
+    label: labelSchema.optional(),
+    description: descriptionSchema.optional(),
+    type: z.literal('webhook'),
+    sample: sampleSchema,
+    input: inputSchema,
+    output: outputSchema,
+    handle: z
+      .function()
+      .args(
+        z.object({
+          payload: z.object({
+            body: z.string().optional(),
+            headers: z.record(z.string()).optional(),
+          }),
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+          triggerContext: z.record(z.any()),
+          history: z.array(z.string()).optional(),
+        })
+      )
+      .returns(z.promise(z.any())),
+    uniqueId: z
+      .function()
+      .args(
+        z.object({
+          eventId: z.string(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+        })
+      )
+      .returns(z.string()),
+    createHook: z
+      .function()
+      .args(
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+          triggerId: z.string(),
+        })
+      )
+      .returns(z.promise(z.any()))
+      .optional(),
+    deleteHook: z
+      .function()
+      .args(
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+          triggerContext: z.record(z.any()),
+        })
+      )
+      .optional(),
+  })
+  .strict();
+
+export const triggerSchema = z.discriminatedUnion('type', [pollTriggerSchema, webhookTriggerSchema]);
 
 export const actionSchema = z
   .object({
