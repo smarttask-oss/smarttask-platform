@@ -509,6 +509,7 @@ interface DryTrigger {
   name: z.infer<typeof uniqueNameSchema>;
   label?: z.infer<typeof labelSchema>;
   description?: z.infer<typeof descriptionSchema>;
+  type: 'poll' | 'webhook';
   sample: z.infer<typeof sampleSchema>;
   input: z.infer<typeof inputSchema>;
   output: z.infer<typeof outputSchema>;

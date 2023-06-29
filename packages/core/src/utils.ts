@@ -32,6 +32,7 @@ export const dehydrate = (integration: Integration): DryIntegration => ({
     name: t.name,
     label: t.label,
     description: t.description,
+    type: t.type,
     sample: t.sample,
     input: t.input,
     output: t.output,
