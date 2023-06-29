@@ -190,18 +190,19 @@ export const arrayConfigSchema: z.ZodType<{
 );
 
 export const inputSchema = z.array(z.union([scalarConfigSchema, arrayConfigSchema])).max(128);
+export type Input = z.infer<typeof inputSchema>;
 
-type OutputInnerSchema =
+type OutputInner =
   | { type: 'string' | 'boolean' | 'number' | 'null' | 'undefined' }
-  | { type: 'array'; items: OutputInnerSchema }
-  | { type: 'object'; properties: Record<string, OutputInnerSchema> }
-  | { type: 'union'; types: OutputInnerSchema[] };
+  | { type: 'array'; items: OutputInner }
+  | { type: 'object'; properties: Record<string, OutputInner> }
+  | { type: 'union'; types: OutputInner[] };
 
-type OutputSchema =
-  | { type: 'array'; items: OutputInnerSchema }
-  | { type: 'object'; properties: Record<string, OutputInnerSchema> };
+export type Output =
+  | { type: 'array'; items: OutputInner }
+  | { type: 'object'; properties: Record<string, OutputInner> };
 
-const outputInnerSchema: z.ZodType<OutputInnerSchema> = z.lazy(() =>
+const outputInnerSchema: z.ZodType<OutputInner> = z.lazy(() =>
   z.discriminatedUnion('type', [
     z.object({ type: z.literal('string') }),
     z.object({ type: z.literal('boolean') }),
@@ -214,7 +215,7 @@ const outputInnerSchema: z.ZodType<OutputInnerSchema> = z.lazy(() =>
   ])
 );
 
-export const outputSchema: z.ZodType<OutputSchema> = z.lazy(() =>
+export const outputSchema: z.ZodType<Output> = z.lazy(() =>
   z.discriminatedUnion('type', [
     z.object({ type: z.literal('array'), items: outputInnerSchema }),
     z.object({ type: z.literal('object'), properties: z.record(outputInnerSchema) }),
@@ -307,6 +308,7 @@ export const authenticationSchema = z.discriminatedUnion('type', [
   oauth2AuthenticationSchema,
   apiKeyAuthenticationSchema,
 ]);
+export type Authentication = z.infer<typeof authenticationSchema>;
 
 export const resourceSchema = z
   .object({
@@ -326,6 +328,7 @@ export const resourceSchema = z
       .returns(z.promise(z.any())),
   })
   .strict();
+export type Resource = z.infer<typeof resourceSchema>;
 
 const pollTriggerSchema = z
   .object({
@@ -431,6 +434,7 @@ const webhookTriggerSchema = z
   .strict();
 
 export const triggerSchema = z.discriminatedUnion('type', [pollTriggerSchema, webhookTriggerSchema]);
+export type Trigger = z.infer<typeof triggerSchema>;
 
 export const actionSchema = z
   .object({
@@ -454,6 +458,7 @@ export const actionSchema = z
       .returns(z.promise(z.any())),
   })
   .strict();
+export type Action = z.infer<typeof actionSchema>;
 
 export const injectionSchema = z
   .object({
@@ -477,6 +482,7 @@ export const injectionSchema = z
       .returns(z.promise(z.any())),
   })
   .strict();
+export type Injections = z.infer<typeof injectionSchema>;
 
 export const integrationSchema = z
   .object({
@@ -491,7 +497,6 @@ export const integrationSchema = z
     injections: z.array(injectionSchema),
   })
   .strict();
-
 export type Integration = z.infer<typeof integrationSchema>;
 
 interface DryResource {
