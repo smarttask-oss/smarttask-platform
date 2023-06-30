@@ -41,7 +41,7 @@ describe('case', () => {
               return null;
             }
           },
-          uniqueId: c => `${c.eventId}-${c.authData.id}`,
+          uniqueKey: c => ({ eventId: c.eventId, connectionId: c.authData.connectionId }),
           createHook: async c => {
             return await fakeCreateWebhook(c.triggerId);
           },
@@ -177,7 +177,11 @@ describe('case', () => {
               return null;
             }
           },
-          uniqueId: c => `${c.eventId}-${c.authData.id}`,
+          uniqueKey: c => ({
+            eventId: c.eventId,
+            connectionId: c.authData.connectionId,
+            repository: c.input.repository,
+          }),
           createHook: async c => {
             return await fakeCreateWebhook(c.triggerId);
           },
@@ -195,7 +199,7 @@ describe('case', () => {
             type: 'object',
             properties: {},
           },
-          uniqueId: c => `${c.eventId}-${c.authData.id}`,
+          uniqueKey: c => ({ eventId: c.eventId, connectionId: c.authData.connectionId }),
           handle: async c => {
             return { snapshot: [], delta: [] };
           },

@@ -353,7 +353,7 @@ const pollTriggerSchema = z
         })
       )
       .returns(z.promise(z.object({ snapshot: z.array(z.string()), delta: z.array(z.any()) }))),
-    uniqueId: z
+    uniqueKey: z
       .function()
       .args(
         z.object({
@@ -362,7 +362,7 @@ const pollTriggerSchema = z
           input: z.record(z.any()),
         })
       )
-      .returns(z.string()),
+      .returns(z.record(z.union([z.string(), z.number(), z.boolean()]))),
   })
   .strict();
 
@@ -389,11 +389,10 @@ const webhookTriggerSchema = z
           authData: z.record(z.string()),
           input: z.record(z.any()),
           triggerContext: z.record(z.any()),
-          history: z.array(z.string()).optional(),
         })
       )
       .returns(z.promise(z.any())),
-    uniqueId: z
+    uniqueKey: z
       .function()
       .args(
         z.object({
@@ -402,7 +401,7 @@ const webhookTriggerSchema = z
           input: z.record(z.any()),
         })
       )
-      .returns(z.string()),
+      .returns(z.record(z.union([z.string(), z.number(), z.boolean()]))),
     createHook: z
       .function()
       .args(
