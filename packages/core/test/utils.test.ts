@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Json } from '../src/schema';
-import { camelize, filterKeys } from '../src/';
+import { camelize, filterKeys } from '../src';
 
 interface JsonEntry {
   v: Json;

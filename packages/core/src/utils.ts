@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { camelCase, pick, reduce } from 'lodash';
+import _ from 'lodash';
 import { z } from 'zod';
 import { DryIntegration, Integration, Json, httpRequestOptionsSchema } from './schema';
 
@@ -67,16 +67,16 @@ export const camelize = (obj: Json): Json => {
   } else if (Array.isArray(obj)) {
     return obj.map(v => camelize(v));
   }
-  return reduce(
+  return _.reduce(
     obj,
     (r, v, k) => {
       return {
         ...r,
-        [camelCase(k)]: camelize(v),
+        [_.camelCase(k)]: camelize(v),
       };
     },
     {}
   );
 };
 
-export const filterKeys = (obj: any, keys: string[]): any => pick(obj, keys);
+export const filterKeys = (obj: any, keys: string[]): any => _.pick(obj, keys);
