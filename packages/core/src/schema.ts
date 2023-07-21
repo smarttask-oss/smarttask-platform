@@ -7,7 +7,7 @@ export const jsonSchema: z.ZodType<Json> = z.lazy(() =>
   z.union([literal, z.array(jsonSchema), z.record(jsonSchema)])
 );
 
-export const sampleSchema = z.record(jsonSchema);
+export const sampleSchema = jsonSchema;
 
 export const semanticVersionSchema = z.union([
   z.string().regex(/^0\.(0|[1-9][0-9]*)\.[1-9][0-9]*$/),

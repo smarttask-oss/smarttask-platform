@@ -1,6 +1,6 @@
 {
   "name": "@smarttask-platform/core",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "SmartTask Platform core definitions and utilities.",
   "type": "module",
   "repository": "smarttask-oss/smarttask-platform",
