@@ -9,5 +9,5 @@ export {
   Resource,
   Trigger,
   integrationSchema,
-} from './schema';
-export { camelize, dehydrate, filterKeys, request } from './utils';
+} from './schema.js';
+export { camelize, dehydrate, filterKeys, request } from './utils.js';

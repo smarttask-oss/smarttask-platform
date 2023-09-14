@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import { z } from 'zod';
-import { DryIntegration, Integration, Json, httpRequestOptionsSchema } from './schema';
+import { DryIntegration, Integration, Json, httpRequestOptionsSchema } from './schema.js';
 
 export const request = async <T>(options: z.infer<typeof httpRequestOptionsSchema>): Promise<T> => {
   const { data } = await axios.request<T>({
