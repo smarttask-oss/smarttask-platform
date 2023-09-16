@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@tsconfig/node18": "^18.2.1",
-    "@types/node": "^20.2.5",
-    "typescript": "^5.0.4"
+    "@tsconfig/node16": "1.0.4",
+    "@types/node": "20.2.5",
+    "typescript": "5.0.4"
   },
   "workspaces": [
     "packages/*"

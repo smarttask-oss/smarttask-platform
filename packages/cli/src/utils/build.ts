@@ -3,7 +3,7 @@ import archiver from 'archiver';
 import { execSync } from 'child_process';
 import * as esbuild from 'esbuild';
 import { createWriteStream } from 'fs';
-import { chmod, rm, writeFile } from 'fs/promises';
+import { rm, writeFile } from 'fs/promises';
 import { resolve } from 'path';
 
 interface BuildOptions {
@@ -41,15 +41,14 @@ const dehydrate = async (dir: string) => {
   try {
     await writeFile(
       path,
-      `import { writeFileSync } from 'fs';
-import { resolve } from 'path';
-import { dehydrate } from '@smarttask-platform/core/dist/utils.js';
+      `import { dehydrate } from '@smarttask-platform/core/dist/utils.js';
+import { writeFileSync } from 'fs';
 import pkg from './index.js';
-    
+
 const func = () => {
   writeFileSync('dist/schema.json', JSON.stringify(dehydrate(pkg.integration), undefined, 2));
 };
-    
+
 func();`
     );
     execSync('node dist/dehydrate.mjs');
