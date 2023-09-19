@@ -282,6 +282,7 @@ export const oauth2AuthenticationSchema = z
         z.object({
           env: z.record(z.string()),
           accessToken: z.string(),
+          authData: z.record(z.string()),
         })
       )
       .returns(z.promise(z.string())),
