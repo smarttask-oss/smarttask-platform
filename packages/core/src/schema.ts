@@ -433,7 +433,90 @@ const webhookTriggerSchema = z
   })
   .strict();
 
-export const triggerSchema = z.discriminatedUnion('type', [pollTriggerSchema, webhookTriggerSchema]);
+const webhookRefreshableTriggerSchema = z
+  .object({
+    name: uniqueNameSchema,
+    label: labelSchema.optional(),
+    description: descriptionSchema.optional(),
+    type: z.literal('webhook-refreshable'),
+    sample: sampleSchema,
+    input: inputSchema,
+    output: outputSchema,
+    handle: z
+      .function()
+      .args(
+        z.object({
+          payload: z.object({
+            body: z.string().optional(),
+            headers: z.record(z.string()).optional(),
+          }),
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+          triggerContext: z.record(z.any()),
+        })
+      )
+      .returns(z.promise(z.any())),
+    uniqueKey: z
+      .function()
+      .args(
+        z.object({
+          eventId: z.string(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+        })
+      )
+      .returns(z.record(z.union([z.string(), z.number(), z.boolean()]))),
+    createHook: z
+      .function()
+      .args(
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+          triggerId: z.string(),
+        })
+      )
+      .returns(z.promise(z.any()))
+      .optional(),
+    refreshHook: z
+      .function()
+      .args(
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+          triggerContext: z.record(z.any()),
+        })
+      )
+      .optional(),
+    deleteHook: z
+      .function()
+      .args(
+        z.object({
+          env: z.record(z.string()),
+          accessToken: z.string().optional(),
+          apiKey: z.string().optional(),
+          authData: z.record(z.string()),
+          input: z.record(z.any()),
+          triggerContext: z.record(z.any()),
+        })
+      )
+      .optional(),
+  })
+  .strict();
+
+export const triggerSchema = z.discriminatedUnion('type', [
+  pollTriggerSchema,
+  webhookTriggerSchema,
+  webhookRefreshableTriggerSchema,
+]);
 export type Trigger = z.infer<typeof triggerSchema>;
 
 export const actionSchema = z
@@ -509,7 +592,7 @@ interface DryTrigger {
   name: z.infer<typeof uniqueNameSchema>;
   label?: z.infer<typeof labelSchema>;
   description?: z.infer<typeof descriptionSchema>;
-  type: 'poll' | 'webhook';
+  type: 'poll' | 'webhook' | 'webhook-refreshable';
   sample: z.infer<typeof sampleSchema>;
   input: z.infer<typeof inputSchema>;
   output: z.infer<typeof outputSchema>;
