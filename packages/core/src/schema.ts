@@ -20,11 +20,7 @@ export const uniqueNameSchema = z
   .max(64)
   .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/);
 
-export const labelSchema = z
-  .string()
-  .min(2)
-  .max(64)
-  .regex(/^[a-zA-Z][a-zA-Z0-9_\-\s]*$/);
+export const labelSchema = z.string().min(2).max(64);
 
 export const descriptionSchema = z.string().min(4).max(1024);
 
@@ -51,11 +47,7 @@ export const configNameSchema = z
   .max(64)
   .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/);
 
-export const configLabelSchema = z
-  .string()
-  .min(2)
-  .max(128)
-  .regex(/^[a-zA-Z][a-zA-Z0-9\-]*$/);
+export const configLabelSchema = z.string().min(2).max(128);
 export const configDescriptionSchema = z.string().min(2).max(1024);
 
 export const stringConfigSchema = z
@@ -570,7 +562,7 @@ export type Injections = z.infer<typeof injectionSchema>;
 export const integrationSchema = z
   .object({
     name: uniqueNameSchema,
-    displayName: labelSchema.optional(),
+    label: labelSchema.optional(),
     description: descriptionSchema.optional(),
     version: semanticVersionSchema,
     authentication: authenticationSchema.optional(),
@@ -618,7 +610,7 @@ interface DryInjection {
 
 export interface DryIntegration {
   name: z.infer<typeof uniqueNameSchema>;
-  displayName?: z.infer<typeof labelSchema>;
+  label?: z.infer<typeof labelSchema>;
   description?: z.infer<typeof descriptionSchema>;
   version: z.infer<typeof semanticVersionSchema>;
   authentication?: { type: 'api-key' } | { type: 'oauth2' };

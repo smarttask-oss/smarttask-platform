@@ -18,7 +18,7 @@ export const request = async <T>(options: z.infer<typeof httpRequestOptionsSchem
 
 export const dehydrate = (integration: Integration): DryIntegration => ({
   name: integration.name,
-  displayName: integration.displayName,
+  label: integration.label,
   description: integration.description,
   version: integration.version,
   authentication:

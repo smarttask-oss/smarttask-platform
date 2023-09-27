@@ -182,11 +182,11 @@ describe('schema', () => {
       },
       {
         v: '____',
-        r: false,
+        r: true,
       },
       {
         v: '0123',
-        r: false,
+        r: true,
       },
       {
         v: 'send-email',
