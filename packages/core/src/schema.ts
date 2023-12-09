@@ -241,6 +241,7 @@ export const tokenWithIdSchema = z.object({
 export const oauth2AuthenticationSchema = z
   .object({
     type: z.literal('oauth2'),
+    provider: z.string(),
     url: z
       .function()
       .args(
@@ -613,7 +614,7 @@ export interface DryIntegration {
   label?: z.infer<typeof labelSchema>;
   description?: z.infer<typeof descriptionSchema>;
   version: z.infer<typeof semanticVersionSchema>;
-  authentication?: { type: 'api-key' } | { type: 'oauth2' };
+  authentication?: { type: 'api-key' } | { type: 'oauth2'; provider: string };
   resources: DryResource[];
   triggers: DryTrigger[];
   actions: DryAction[];

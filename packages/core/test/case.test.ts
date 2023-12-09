@@ -61,6 +61,7 @@ describe('case', () => {
       version: '1.0.0',
       authentication: {
         type: 'oauth2',
+        provider: 'github',
         url: context => {
           return `https://github.com/login/oauth/authorize?${new URLSearchParams({
             client_id: context.env.CLIENT_ID,

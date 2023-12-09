@@ -22,7 +22,11 @@ export const dehydrate = (integration: Integration): DryIntegration => ({
   description: integration.description,
   version: integration.version,
   authentication:
-    integration.authentication === undefined ? undefined : { type: integration.authentication.type },
+    integration.authentication === undefined
+      ? undefined
+      : integration.authentication.type === 'oauth2'
+      ? { type: 'oauth2', provider: integration.authentication.provider }
+      : { type: 'api-key' },
   resources: integration.resources.map(r => ({
     name: r.name,
     sample: r.sample,

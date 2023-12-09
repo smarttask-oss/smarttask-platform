@@ -614,6 +614,7 @@ describe('schema', () => {
       {
         v: {
           type: 'oauth2',
+          provider: 'github',
           label: () => 'abcd',
           url: () => '',
           authorize: async () => ({
@@ -635,6 +636,7 @@ describe('schema', () => {
       {
         v: {
           type: 'oauth2',
+          provider: 'discord',
           label: () => 'abcd',
           url: () => '',
           authorize: async () => ({
