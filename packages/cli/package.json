@@ -1,6 +1,6 @@
 {
   "name": "@smarttask-platform/cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "CLI of SmartTask Platform",
   "license": "MIT",
   "bin": {
@@ -44,14 +44,14 @@
     "sdk"
   ],
   "dependencies": {
-    "@oclif/core": "^2",
-    "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^2.4.7",
+    "@oclif/core": "^3",
+    "@oclif/plugin-help": "^6",
+    "@oclif/plugin-plugins": "^4",
     "archiver": "^5.3.1",
     "esbuild": "^0.17.19"
   },
   "devDependencies": {
-    "@oclif/test": "^2.3.21",
+    "@oclif/test": "^3",
     "@types/archiver": "^5.3.2",
     "@types/node": "^20.2.5",
     "@vitest/coverage-c8": "^0.30.1",
