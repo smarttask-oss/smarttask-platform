@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.195",
-    "@vitest/coverage-c8": "^0.30.1",
-    "vitest": "^0.30.1"
+    "vitest": "^1.0.3"
   }
 }
